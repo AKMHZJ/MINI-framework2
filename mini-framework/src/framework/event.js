@@ -18,7 +18,19 @@ function findRegisteredElement(target, eventType) {
   return null;
 }
 
+// export function initEventSystem(container){
+//   const eventTypes = ['click', 'keypress', 'scroll', 'input', 'change'];
 
+//   eventTypes.forEach(eventType => {
+//     attachListener(container, eventType, event => {
+//       const registeredElement = findRegisteredElement(event.target, event);
+//       if(registeredElement){
+//         const handler = handlers.get(registeredElement).get(eventType);
+//         handler(event)
+//       }
+//     })
+//   })
+// }
 
 
 // Register a handler for an event on an element.

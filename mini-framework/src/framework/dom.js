@@ -1,5 +1,7 @@
 // DOM abstraction and manipulation logic
 
+import { on } from "./event.js";
+
 export function makeElement(tag, attrs = {}, children = []) {
   children = Array.isArray(children) ? children : [children];
 
@@ -31,6 +33,8 @@ function createDOM(vnode) {
   for (const [key, value] of Object.entries(vnode.attrs)) {
     if (key.startsWith("on")) {
       // event handlers
+      const eventName = key.toLowerCase().slice(2)
+      on(eventName, element, value)
     } else {
       element.setAttribute(key, value);
     }
@@ -44,6 +48,8 @@ function createDOM(vnode) {
 
   return element;
 }
+
+
 
 let prevVNode = null;
 

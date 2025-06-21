@@ -32,3 +32,24 @@ const vnode = makeElement("div", { class: "container" }, [
   "World", // Text node
 ]);
 ```
+
+
+## Event Handling
+
+The event handling system uses event delegation to manage user interactions efficiently. A single listener per event type is attached to the app’s root container, and events are dispatched to registered handlers based on the target element. This system avoids direct use of `addEventListener` by using `on*` properties.
+
+### Features
+- Supports common events: `click`, `keypress`, `scroll`, `input`, `change`.
+- Integrates with Virtual DOM via `on*` attributes (e.g., `onClick`).
+- Uses event delegation for performance and dynamic elements.
+
+### API
+
+#### `initEventSystem(container)`
+Initializes the event system by attaching listeners to the root container.
+- `container`: The DOM element (e.g., `document.getElementById('app')`).
+
+**Example:**
+```javascript
+initEventSystem(document.getElementById('app'));
+```
