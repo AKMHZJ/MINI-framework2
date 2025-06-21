@@ -53,3 +53,26 @@ Initializes the event system by attaching listeners to the root container.
 ```javascript
 initEventSystem(document.getElementById('app'));
 ```
+
+## Routing System
+
+The routing system synchronizes the app’s state with the URL using hash-based routing (e.g., `/#all`). It maps URLs to views, updates the DOM via the Virtual DOM, and supports navigation without page reloads.
+
+### Features
+- Hash-based routing (e.g., `/#all`, `/#active`).
+- Programmatic and link-based navigation.
+- Integration with Virtual DOM for view rendering.
+- Support for browser back/forward buttons.
+
+### API
+
+#### `defineRoutes(routes)`
+Registers an array of routes.
+- `routes`: Array of objects with `path` (string) and `view` (function returning a VNode).
+
+**Example:**
+```javascript
+defineRoutes([
+  { path: '/all', view: () => createElement('div', {}, 'All Todos') },
+  { path: '/active', view: () => createElement('div', {}, 'Active Todos') },
+]);
