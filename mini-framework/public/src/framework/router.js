@@ -1,6 +1,7 @@
 // Routing system implementation
 
 import { render } from "./dom.js";
+import { getState, setState } from "./state.js";
 
 let routes = [];
 let container = document.getElementById('app');
@@ -16,6 +17,8 @@ function renderRoute(){
     const path = window.location.hash || '#all';
     const route = matchRoute(path);
     if (route){
+        const state = getState();
+        setState({...state, filter: route.path.slice(1) || 'all'})
         const vnode = route.view();
         render(vnode, container);
     }
