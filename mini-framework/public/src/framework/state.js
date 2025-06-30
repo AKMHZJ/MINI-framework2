@@ -1,61 +1,51 @@
-let state = {};
+/* ==========================================================
+   In-memory global state (no localStorage persistence)
+   ========================================================== */
+
+let state      = {};
 const listeners = new Set();
-let callIndex = -1;
+let callIndex   = -1;   // for useState hook order
 
-function loadState(initialState) {
-  const savedState = localStorage.getItem('mini-framework-state');
-  let loadedState = savedState ? JSON.parse(savedState) : { ...initialState };
-
-  if (!Array.isArray(loadedState.hooks)) {
-    loadedState.hooks = [];
-  }
-  return loadedState;
-}
-
-function saveState() {
-  localStorage.setItem('mini-framework-state', JSON.stringify(state));
-}
-
+/* ---------- bootstrap ---------- */
 export function initState(initialState) {
-  state = loadState(initialState);
-  saveState();
+  state = { ...initialState };
 }
 
+/* ---------- basic getters / setters ---------- */
 export function getState() {
-  return { ...state };
+  return { ...state };             // return a shallow copy
 }
 
 export function setState(newState) {
-  const mergedState = { ...state, ...newState };
-  if (!Array.isArray(mergedState.hooks)) {
-    mergedState.hooks = state.hooks || [];
-  }
-  state = mergedState;
-  saveState();
-  listeners.forEach(listener => listener(state));
+  state = { ...state, ...newState };
+
+  /* ensure hooks array exists */
+  if (!Array.isArray(state.hooks)) state.hooks = [];
+
+  listeners.forEach((fn) => fn(state));
 }
 
-export function subscribe(listener) {
-  listeners.add(listener);
-  return () => listeners.delete(listener);
+/* ---------- subscription API ---------- */
+export function subscribe(fn) {
+  listeners.add(fn);
+  return () => listeners.delete(fn);
 }
 
+/* ---------- lightweight useState hook ---------- */
 export function useState(initialValue) {
   callIndex++;
-  const currentCallIndex = callIndex;
+  const idx = callIndex;
 
-  if (state.hooks[currentCallIndex] === undefined) {
-    state.hooks[currentCallIndex] = initialValue;
-    saveState();
+  if (state.hooks[idx] === undefined) {
+    state.hooks[idx] = initialValue;
   }
 
-  const setValue = (newValue) => {
-    state.hooks[currentCallIndex] = newValue;
-    saveState();
-    listeners.forEach(listener => listener(state));
+  const setValue = (v) => {
+    state.hooks[idx] = v;
+    listeners.forEach((fn) => fn(state));
   };
 
-  return [state.hooks[currentCallIndex], setValue];
+  return [state.hooks[idx], setValue];
 }
 
 export function resetHookIndex() {
