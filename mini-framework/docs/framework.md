@@ -4,7 +4,11 @@
 
 ## DOM Abstraction
 
-The DOM abstraction layer simplifies DOM manipulation by using a Virtual DOM. Users define the UI as JavaScript objects (Virtual Nodes or VNodes), and the framework efficiently updates the real DOM by comparing old and new VNodes.
+Welcome to the official documentation for the **Mini Framework** — a lightweight, modular JavaScript framework designed to help you build reactive apps from scratch without relying on external libraries like React or Vue.
+
+It uses concepts like virtual DOM, state management, routing, and custom event handling to provide a solid foundation for frontend development.
+
+---
 
 ### Features
 
@@ -13,66 +17,180 @@ The DOM abstraction layer simplifies DOM manipulation by using a Virtual DOM. Us
 - Update the DOM efficiently by applying only necessary changes.
 - Support for text nodes and attributes (events to be added).
 
-### API
+---
 
-#### `makeElement(tag, attrs, children)`
+### 1. Setup
 
-Creates a Virtual DOM node.
+Create a basic HTML file:
 
-- `tag`: String, the HTML tag (e.g., `'div'`, `'h1'`).
-- `attrs`: Object, attributes like `class`, `id` (e.g., `{ class: 'container' }`).
-- `children`: Array or single child, VNodes or strings for text nodes.
-- Returns: A VNode object.
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>My App</title>
+    <link rel="stylesheet" href="./styles/style.css" />
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="./src/framework/app.js"></script>
+  </body>
+</html>
+```
 
-**Example:**
+---
 
-```javascript
-const vnode = makeElement("div", { class: "container" }, [
-  makeElement("h1", {}, "Hello"),
-  "World", // Text node
+### 2. Folder Structure
+
+---
+
+### 🧱 Creating Elements
+
+You can use `makeElement()` to create virtual elements that describe your UI.
+
+#### Syntax
+
+```js
+makeElement(tag, attributes, children);
+```
+
+#### Example
+
+```js
+const el = makeElement("h1", { class: "title" }, "Hello World");
+```
+
+This creates a virtual representation of:
+
+```html
+<h1 class="title">Hello World</h1>
+```
+
+You can also nest elements:
+
+```js
+makeElement("div", { class: "container" }, [
+  makeElement("h1", {}, "Title"),
+  makeElement("p", {}, "Description"),
 ]);
 ```
 
+---
 
-## Event Handling
+### Adding Events
 
-The event handling system uses event delegation to manage user interactions efficiently. A single listener per event type is attached to the app’s root container, and events are dispatched to registered handlers based on the target element. This system avoids direct use of `addEventListener` by using `on*` properties.
+Instead of using `addEventListener`, this framework provides a custom event system using delegation.
 
-### Features
-- Supports common events: `click`, `keypress`, `scroll`, `input`, `change`.
-- Integrates with Virtual DOM via `on*` attributes (e.g., `onClick`).
-- Uses event delegation for performance and dynamic elements.
+#### Syntax
 
-### API
+You can attach events using attributes that start with `on`, like:
 
-#### `initEventSystem(container)`
-Initializes the event system by attaching listeners to the root container.
-- `container`: The DOM element (e.g., `document.getElementById('app')`).
-
-**Example:**
-```javascript
-initEventSystem(document.getElementById('app'));
+```js
+makeElement("button", {
+  onClick: () => alert("Clicked!"),
+}, "Click Me");
 ```
 
-## Routing System
+#### Supported Events
 
-The routing system synchronizes the app’s state with the URL using hash-based routing (e.g., `/#all`). It maps URLs to views, updates the DOM via the Virtual DOM, and supports navigation without page reloads.
+- `onClick`
+- `onInput`
+- `onKeyPress`
+- `onKeyDown`
+- `onChange`
+- `onScroll`
 
-### Features
-- Hash-based routing (e.g., `/#all`, `/#active`).
-- Programmatic and link-based navigation.
-- Integration with Virtual DOM for view rendering.
-- Support for browser back/forward buttons.
+These handlers are registered through a global listener initialized with `initEventSystem(container)`.
 
-### API
+---
 
-#### `defineRoutes(routes)`
-Registers an array of routes.
-- `routes`: Array of objects with `path` (string) and `view` (function returning a VNode).
+### 🧠 Managing State
 
-**Example:**
-```javascript
+The framework includes a built-in state system.
+
+#### Initialize State
+
+You must initialize the global state once:
+
+```js
+initState({
+  todos: [],
+  filter: "all",
+  hooks: [], // Required for useState
+});
+```
+
+Any updates automatically re-render your app.
+
+#### useState (Local State)
+
+You can use a simple `useState` hook for local component-level state:
+
+```js
+const [value, setValue] = useState("");
+```
+
+Each call is tracked by index. Always call `resetHookIndex()` before every render.
+
+---
+
+### 🌍 Routing
+
+You can define routes that respond to hash changes (`#/all`, `#/active`, etc.).
+
+#### Define Routes
+
+```js
 defineRoutes([
-  { path: '/all', view: () => createElement('div', {}, 'All Todos') },
-  { path: '/active', view: () => createElement('div', {}, 'Active Todos') },
+  { path: "/all", view: TodoApp },
+  { path: "/active", view: TodoApp },
+  { path: "/completed", view: TodoApp },
 ]);
+```
+
+#### Navigate Between Routes
+
+```js
+navigate("/active");
+```
+
+#### Initialize the Router
+
+Initialize the router once at startup:
+
+```js
+initRouter();
+```
+
+---
+
+### 📦 Full Example
+
+```js
+function App() {
+  const [count, setCount] = useState(0);
+
+  return makeElement("div", { class: "counter" }, [
+    makeElement("h1", {}, `Count: ${count}`),
+    makeElement("button", {
+      onClick: () => setCount(count + 1)
+    }, "Increment"),
+  ]);
+}
+
+subscribe(() => {
+  resetHookIndex();
+  render(App(), document.getElementById("app"));
+});
+```
+
+---
+
+### 🧪 Why It Works This Way
+
+- **Virtual DOM**: Your UI is described as pure JavaScript objects. This allows comparison between the previous and new state and only updates what’s changed.
+- **Event Delegation**: Instead of attaching events to each element, events bubble up to a common parent (container) for performance and simplicity.
+- **Global State**: Centralized state allows global data to be shared and updated across all components.
+- **Hooks (`useState`)**: Inspired by React, these allow local state within functional components.
+- **Routing**: Routes change the view and synchronize with the state filter, all without full page reloads.
+
