@@ -1,133 +1,196 @@
-## mini-framework
+<!-- Framework documentation (how to use, features, examples) -->
 
-Now that you have already used a framework of your choice, you must now implement some features on a framework of your own. That's right, you are going to create a framework.
+# Mini Framework Documentation
 
-Be aware that a framework is different from a library. When you call a method from a library, you are in control. But with a framework, the control is inverted: the framework calls you.
+## DOM Abstraction
 
-### Objectives
+Welcome to the official documentation for the **Mini Framework** — a lightweight, modular JavaScript framework designed to help you build reactive apps from scratch without relying on external libraries like React or Vue.
 
-Your framework should implement:
+It uses concepts like virtual DOM, state management, routing, and custom event handling to provide a solid foundation for frontend development.
 
-- Abstracting the DOM
-  Routing System
-- State Management
-- Event Handling
+---
 
-You will also need to make a [todoMVC](http://todomvc.com/) project using your framework.
+### Features
 
-### Instructions
+- Create elements with tags, attributes, and children.
+- Nest elements hierarchically.
+- Update the DOM efficiently by applying only necessary changes.
+- Support for text nodes and attributes (events to be added).
 
-You must create documentation for your framework, so that users (auditers) are able to understand and know how to use your framework without experiencing any awkwardness.
+---
 
-Your framework will be tested by using it, like you previously have used one, in the social network project. So the user has to be presented to a folder structure that allows him to run the app from the root of that folder structure. The user testing your framework will have to implement some simple code in order to test the features described below.
+### 1. Setup
 
-> You are not allowed to use any framework/library like `React`, `Angular`, `Vue` and similar to create your own framework.
-
-#### Documentation
-
-By documentation we mean, the explaining of how does the framework works and how to work with it, for example: how to create a div, how to add an event to a button, etc. A new user of your framework, after reading the documentation has to be able to use it without too much guessing work.
-
-So for this you will have to create a [markdown](https://www.markdownguide.org/getting-started/) file, in which will have to contain:
-
-- Explanation on the features of your framework
-- Code examples and explanations on how to:
-  - Create an element
-  - Create an event
-  - Nest elements
-  - Add attributes to an element
-- Explanation on why things work the way they work
-
-#### Abstracting the DOM
-
-You will have to implement a way to handle the DOM. The DOM can be seen as a big object, like in the example below:
+Create a basic HTML file:
 
 ```html
-<html>
-  <div class="nameSubm">
-    <input type="text" placeholder="Insert Name" />
-    <input type="submit" placeholder="Submit" />
-  </div>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>My App</title>
+    <link rel="stylesheet" href="./styles/style.css" />
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="./src/framework/app.js"></script>
+  </body>
 </html>
 ```
 
-The HTML above can be written as:
+---
 
-```json
-{
-  "tag": "html",
-  "attrs": {},
-  "children": [
-    {
-      "tag": "div",
-      "attrs": {
-        "class": "nameSubm"
-      },
-      "children": [
-        {
-          "tag": "input",
-          "attrs": {
-            "type": "text",
-            "placeholder": "Insert Name"
-          }
-        },
-        {
-          "tag": "input",
-          "attrs": {
-            "type": "submit",
-            "placeholder": "Submit"
-          }
-        }
-      ]
-    }
-  ]
-}
+### 2. Folder Structure
+
+---
+
+### 🧱 Creating Elements
+
+You can use `makeElement()` to create virtual elements that describe your UI.
+
+#### Syntax
+
+```js
+makeElement(tag, attributes, children);
 ```
 
-With this in mind you can manipulate the DOM more easily in JS. And that is what you will do using a method. Here are some methods you can use:
+#### Example
 
-- [Virtual DOM](https://bitsofco.de/understanding-the-virtual-dom/) - Using a second DOM with the wanted changes, to compare with the real DOM and change just what is needed
-- [Data Binding](https://docs.microsoft.com/en-us/dotnet/desktop-wpf/data/data-binding-overview?redirectedfrom=MSDN) - binds together two data sources and keeps them synchronized
-- [Templating](https://medium.com/@BuildMySite1/javascript-templating-what-is-templating-7ff49d97db6b) - refers to the client side data binding method implemented with the JavaScript language.
+```js
+const el = makeElement("h1", { class: "title" }, "Hello World");
+```
 
-There are a lot of ways to achieve this. Above are just some examples, what matters is that the DOM must respond to certain actions of the user.
+This creates a virtual representation of:
 
-You have to take into account the events, children and attributes of each element of the DOM.
+```html
+<h1 class="title">Hello World</h1>
+```
 
----
+You can also nest elements:
 
-#### Routing System
-
-Routing in this case refers to the synchronization of the state of the app with the URL. In other words you will have to develop a simple way to change the URL through actions of the user that will also change the state (explained in the next topic).
-
----
-
-#### State Management
-
-The state of an app can be seen as the outcome of all the actions that the user has taken since the page loaded. In other words, if a user clicks on a button to execute an action, the state should then change.\
-What you will need to do is to implement a way to handle this state. Remember that multiple pages may need to interact with the same state, so you need to find a way to let the state be reachable at every time.
+```js
+makeElement("div", { class: "container" }, [
+  makeElement("h1", {}, "Title"),
+  makeElement("p", {}, "Description"),
+]);
+```
 
 ---
 
-#### Event Handling
+### Adding Events
 
-You will also have to implement a way to handle the events triggered by the user, like: scrolling, clicking, certain keybindings, etc.... Note that this new way of handling events must be different from the `addEventListener()` method that already exists.
+Instead of using `addEventListener`, this framework provides a custom event system using delegation.
+
+#### Syntax
+
+You can attach events using attributes that start with `on`, like:
+
+```js
+makeElement("button", {
+  onClick: () => alert("Clicked!"),
+}, "Click Me");
+```
+
+#### Supported Events
+
+- `onClick`
+- `onInput`
+- `onKeyPress`
+- `onKeyDown`
+- `onChange`
+- `onScroll`
+
+These handlers are registered through a global listener initialized with `initEventSystem(container)`.
 
 ---
 
-#### TodoMVC
+### 🧠 Managing State
 
-A todoMVC project consists of creating a [webpage](https://todomvc.com/examples/react/dist/) (this example is written in React) with the same elements present in the example, so we advise you to test it around first. You have to make your todoMVC project, a functional copy of the examples given in the links above, but using your framework.\
-Be aware that every thing that we can't visually see has to be present too (IDs, classes, etc.).
+The framework includes a built-in state system.
 
-This project will help you learn about:
+#### Initialize State
 
-- Web Development
-  - JS
-  - HTML
-  - CSS
-- Frameworks
-- Documentation
-- DOM
-- Routing
-- State of an Application
-- Event Handling
+You must initialize the global state once:
+
+```js
+initState({
+  todos: [],
+  filter: "all",
+  hooks: [], // Required for useState
+});
+```
+
+Any updates automatically re-render your app.
+
+#### useState (Local State)
+
+You can use a simple `useState` hook for local component-level state:
+
+```js
+const [value, setValue] = useState("");
+```
+
+Each call is tracked by index. Always call `resetHookIndex()` before every render.
+
+---
+
+### 🌍 Routing
+
+You can define routes that respond to hash changes (`#/all`, `#/active`, etc.).
+
+#### Define Routes
+
+```js
+defineRoutes([
+  { path: "/all", view: TodoApp },
+  { path: "/active", view: TodoApp },
+  { path: "/completed", view: TodoApp },
+]);
+```
+
+#### Navigate Between Routes
+
+```js
+navigate("/active");
+```
+
+#### Initialize the Router
+
+Initialize the router once at startup:
+
+```js
+initRouter();
+```
+
+---
+
+### 📦 Full Example
+
+```js
+function App() {
+  const [count, setCount] = useState(0);
+
+  return makeElement("div", { class: "counter" }, [
+    makeElement("h1", {}, `Count: ${count}`),
+    makeElement("button", {
+      onClick: () => setCount(count + 1)
+    }, "Increment"),
+  ]);
+}
+
+subscribe(() => {
+  resetHookIndex();
+  render(App(), document.getElementById("app"));
+});
+```
+
+---
+
+### 🧪 Why It Works This Way
+
+- **Virtual DOM**: Your UI is described as pure JavaScript objects. This allows comparison between the previous and new state and only updates what’s changed.
+- **Event Delegation**: Instead of attaching events to each element, events bubble up to a common parent (container) for performance and simplicity.
+- **Global State**: Centralized state allows global data to be shared and updated across all components.
+- **Hooks (`useState`)**: Inspired by React, these allow local state within functional components.
+- **Routing**: Routes change the view and synchronize with the state filter, all without full page reloads.
+

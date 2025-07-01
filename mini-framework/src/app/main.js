@@ -1,8 +1,8 @@
 /* TodoMVC via mini-framework — DOM-perfect output */
 
-import { initEventSystem } from "./event.js";
-import { defineRoutes, navigate, initRouter } from "./router.js";
-import { makeElement, render } from "./dom.js";
+import { initEventSystem } from "../framework/event.js";
+import { defineRoutes, navigate, initRouter } from "../framework/router.js";
+import { makeElement, render } from "../framework/dom.js";
 import {
   getState,
   setState,
@@ -10,7 +10,7 @@ import {
   initState,
   resetHookIndex,
   useState,
-} from "./state.js";
+} from "../framework/state.js";
 
 /* bootstrap ---------------------------------------------------------- */
 const root = document.getElementById("app");
