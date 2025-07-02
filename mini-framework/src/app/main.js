@@ -278,7 +278,7 @@ function TodoApp() {
                 "a",
                 {
                   class: state.filter === "all" ? "selected" : "",
-                  href: "#/",
+                  href: "#/all",
                   onClick: () => navigate("/all"),
                 },
                 "All"
