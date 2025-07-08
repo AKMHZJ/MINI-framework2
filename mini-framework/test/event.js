@@ -34,16 +34,14 @@
 //   },
 // };
 
-
 // const fakeEventInput = { target: { value: "hello" } }; // Typing: hello
-// inputComponent.attrs.onInput(fakeEventInput); 
+// inputComponent.attrs.onInput(fakeEventInput);
 
 // const fakeEventKeyPressEnter = { key: "Enter" };
 // inputComponent.attrs.onKeyPress(fakeEventKeyPressEnter); // Enter pressed!
 
 // const fakeEventKeyPressOther = { key: "a" };
 // inputComponent.attrs.onKeyPress(fakeEventKeyPressOther); // rien
-
 
 // const input = document.createElement(inputComponent.tag);
 //   Object.entries(inputComponent.attrs).forEach(([key, value]) => {
@@ -71,8 +69,6 @@
 //   input.dispatchEvent(new KeyboardEvent("keypress", { key: "a" })); // Aucun message
 
 // DOM abstraction and manipulation logic
-
-
 
 // Importe ici ton code si tu utilises un module
 // const { on, initEventSystem } = require('./event');
@@ -114,8 +110,8 @@ function createDOM(vnode) {
   for (const [key, value] of Object.entries(vnode.attrs)) {
     if (key.startsWith("on")) {
       // event handlers
-      const eventName = key.toLowerCase().slice(2)
-      on(eventName, element, value)
+      const eventName = key.toLowerCase().slice(2);
+      on(element, eventName, value);
     } else {
       element.setAttribute(key, value);
     }
@@ -130,12 +126,11 @@ function createDOM(vnode) {
   return element;
 }
 
-
-
 let prevVNode = null;
 
 function render(vnode, container) {
   if (prevVNode) {
+    
     updateDOM(prevVNode, vnode, container);
   } else {
     const dom = createDOM(vnode);
@@ -145,18 +140,19 @@ function render(vnode, container) {
   prevVNode = vnode;
 }
 
-
 function updateDOM(oldVNode, newVNode, parent) {
+    console.log(oldVNode, newVNode, parent);
+
   if (!oldVNode || oldVNode.tag != newVNode.tag) {
     const newElement = createDOM(newVNode);
-    parent.replaceChild(newElement, oldVNode.element)
-    newVNode.element = newElement
-    return
+    parent.replaceChild(newElement, oldVNode.element);
+    newVNode.element = newElement;
+    return;
   }
 
-  newVNode.element = oldVNode.element
-  const oldAttrs = oldVNode.attrs
-  const newAttrs = newVNode.attrs
+  newVNode.element = oldVNode.element;
+  const oldAttrs = oldVNode.attrs;
+  const newAttrs = newVNode.attrs;
 
   for (const key of Object.keys(oldAttrs)) {
     if (!(key in newAttrs)) {
@@ -176,7 +172,7 @@ function updateDOM(oldVNode, newVNode, parent) {
 
   for (let i = 0; i < length; i++) {
     if (i < oldChildren.length && i < newChildren.length) {
-      (oldChildren[i], newChildren[i], newVNode.element);
+      oldChildren[i], newChildren[i], newVNode.element;
     } else if (i < oldChildren.length) {
       newVNode.element.removeChild(oldChildren[i].element);
     } else {
@@ -185,41 +181,47 @@ function updateDOM(oldVNode, newVNode, parent) {
       newChildren[i].element = newChildElement;
     }
   }
-
 }
-
-
 
 const handlers = new Map();
 const eventHandlers = new Map();
 
 /// List of Events
 const Events = [
-    'click', 'dblclick', 'keydown', 'keyup', 'keypress', 
-    'input', 'change', 'focus', 'blur',
-    'submit', 'reset', 'scroll', 'resize'
+  "click",
+  "dblclick",
+  "keydown",
+  "keyup",
+  "keypress",
+  "input",
+  "change",
+  "focus",
+  "blur",
+  "submit",
+  "reset",
+  "scroll",
+  "resize",
 ];
 /*************🌟 1. Registry 🌟*************/
 function registry(element, eventType, handler) {
-    if (!handlers.has(element)) {
-        handlers.set(element, new Map());
-    }
+  if (!handlers.has(element)) {
+    handlers.set(element, new Map());
+  }
 
-    const eventMap = handlers.get(element);
-    if (!eventMap.has(eventType)) {
-        eventMap.set(eventType, []);
-    }
+  const eventMap = handlers.get(element);
+  if (!eventMap.has(eventType)) {
+    eventMap.set(eventType, []);
+  }
 
-    eventMap.get(eventType).push(handler);
+  eventMap.get(eventType).push(handler);
 }
 
 /*************🌟 2. Attach Listener 🌟*************/ /*👍*/
 function attachListener(element, eventType, handler) {
-     if (!element || !eventType || !handler) return
-     if (!Events.includes(eventType)) return
-    registry(element, eventType, handler);
+  if (!element || !eventType || !handler) return;
+  if (!Events.includes(eventType)) return;
+  registry(element, eventType, handler);
 }
-
 
 /*************🌟 4. Init Event System 🌟*************/ /*👍*/
 function initEventSystem(container = document) {
@@ -227,37 +229,36 @@ function initEventSystem(container = document) {
     container.addEventListener(eventType, (event) => {
       const match = findRegisteredElement(event);
       if (match) {
-        match.handlers.forEach(handler => handler(event));
-      } 
-    })
-  })
+        match.handlers.forEach((handler) => handler(event));
+      }
+    });
+  });
 }
-
 
 /*************🌟 3. Find Registered Element 🌟*************/
 function findRegisteredElement(event) {
   let target = event.target;
-    while (target && target !== document) {
-        if (handlers.has(target)) {
-            const eventMap = handlers.get(target);
-            if (eventMap.has(event.type)) {
-                return {
-                    element: target,
-                    handlers: eventMap.get(event.type)
-                };
-            }
-        }
-        target = target.parentNode;
+  while (target && target !== document) {
+    if (handlers.has(target)) {
+      const eventMap = handlers.get(target);
+      if (eventMap.has(event.type)) {
+        return {
+          element: target,
+          handlers: eventMap.get(event.type),
+        };
+      }
     }
-    return null;
+    target = target.parentNode;
+  }
+  return null;
 }
 
-
-/*************🌟 5. ON  🌟*************/  /*👍*/
+/*************🌟 5. ON  🌟*************/ /*👍*/
 function on(element, eventType, handler) {
-    attachListener(element, eventType, handler);
-}
+  console.log("--- : ", element, eventType, handler);
 
+  attachListener(element, eventType, handler);
+}
 
 /// Supposé que toutes tes fonctions sont définies ici (ou importées si module)
 // registry, attachListener, findRegisteredElement, initEventSystem, on
@@ -341,14 +342,14 @@ function on(element, eventType, handler) {
 // const span = document.createElement("span");
 // document.body.appendChild(span);
 
-// on(span, "click", () => { 
+// on(span, "click", () => {
 //   console.log(called5, '55');
 //   called5 = true });
 // span.dispatchEvent(new MouseEvent("click", { bubbles: true }));
 
 // setTimeout(() => {
 //   console.log(called5, '5');
-  
+
 //   console.assert(called5, "❌ Test 5 Failed: `on` did not attach or respond");
 //   console.log("✅ Test 5 Passed: on()");
 // }, 0);
@@ -358,10 +359,10 @@ function makeElement(tag, attrs = {}, children = []) {
   let key = undefined;
   if ("key" in attrs) {
     key = attrs.key;
-    delete attrs.key;           // do not output it as HTML attr
+    delete attrs.key; // do not output it as HTML attr
   }
 
-   children = (Array.isArray(children) ? children : [children]).filter(
+  children = (Array.isArray(children) ? children : [children]).filter(
     (c) => c !== null && c !== undefined
   );
   children = children.map((child) =>
@@ -373,24 +374,29 @@ function makeElement(tag, attrs = {}, children = []) {
   return { tag, attrs, children, element: null, key };
 }
 
-
 /////////////////////////////////////////////
 let count = 0;
 function App() {
-  return makeElement('div', { class: 'container' }, [
-    makeElement('h1', {}, `Count: ${count}`),
-    makeElement('button', { onClick: () => {
-      console.log('heey');
-      
-      count++;
-    
-      
-      render(App(), document.getElementById('frame'));
-    } }, 'Increment'),
+  return makeElement("div", { class: "container" }, [
+    makeElement("h1", {}, `Count: ${count}`),
+    makeElement(
+      "button",
+      {
+        onClick: () => {
+          console.log("heey");
+
+         count++;
+
+           render(App(), document.getElementById('frame'));
+        },
+      },
+      "Increment"
+    ),
   ]);
 }
 
-const container = document.getElementById('frame');
+const container = document.getElementById("frame");
+
 console.log(container, "container");
 
 initEventSystem(container);
