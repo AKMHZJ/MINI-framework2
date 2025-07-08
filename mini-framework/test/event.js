@@ -217,10 +217,6 @@ function registry(element, eventType, handler) {
 function attachListener(element, eventType, handler) {
      if (!element || !eventType || !handler) return
      if (!Events.includes(eventType)) return
-
-    //initEventSystem(); // if we need to
-    
-    // Register the handler
     registry(element, eventType, handler);
 }
 
