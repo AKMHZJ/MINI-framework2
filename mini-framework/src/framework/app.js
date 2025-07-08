@@ -1,4 +1,15 @@
-import {initEventSystem} from `./event`
+
+import { initEventSystem } from "./event.js";
+import { defineRoutes, navigate, initRouter } from "./router.js";
+import { makeElement, render } from "./dom.js";
+import {
+  getState,
+  setState,
+  subscribe,
+  initState,
+  resetHookIndex,
+  useState,
+} from "./state.js";
 const container = document.getElementById("app");
 initEventSystem(container);
 
@@ -144,8 +155,8 @@ subscribe(() => {
 
 const routes = [
   { path: "/all", view: App },
-  { path: "/active", view: TodoApp },
-  { path: "/completed", view: TodoApp },
+  // { path: "/active", view: TodoApp },
+  // { path: "/completed", view: TodoApp },
 ];
 
 defineRoutes(routes);
