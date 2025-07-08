@@ -33,6 +33,18 @@ const inputComponent = {
   },
 };
 
+/*
+
+[button]{handleClick}
+[button]{handleSubmit}
+
+Map(){
+  button: [func1, func2],
+  span: [func1, func2]
+}
+
+*/
+
 /*************🌟 1. Registry 🌟*************/
 function registry(element, eventType, handler) {
     if (!handlers.has(element)) {
