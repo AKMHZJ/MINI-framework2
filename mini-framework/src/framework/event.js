@@ -72,7 +72,7 @@ function attachListener(element, eventType, handler) {
 
 
 /*************🌟 4. Init Event System 🌟*************/ /*👍*/
-function initEventSystem(container = document) {
+export function initEventSystem(container = document) {
   Events.forEach((eventType) => {
     container.addEventListener(eventType, (event) => {
       const match = findRegisteredElement(event);
@@ -104,7 +104,7 @@ function findRegisteredElement(event) {
 
 
 /*************🌟 5. ON  🌟*************/  /*👍*/
-function on(element, eventType, handler) {
+export function on(element, eventType, handler) {
     attachListener(element, eventType, handler);
 }
 
@@ -116,7 +116,7 @@ function on(element, eventType, handler) {
 
 
 // Function to attach events to multiple elements
-function attachToElements(selector, eventType, handler) {
+export function attachToElements(selector, eventType, handler) {
     const elements = document.querySelectorAll(selector);
     elements.forEach(function(element) {
         on(element, eventType, handler);
