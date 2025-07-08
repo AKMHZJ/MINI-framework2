@@ -204,10 +204,15 @@ const Events = [
 ];
 /*************🌟 1. Registry 🌟*************/
 function registry(element, eventType, handler) {
+  console.log( "registry", element, eventType, handler);
+  
   if (!handlers.has(element)) {
+    console.log( "registry", handlers.has(element));
+    console.log("handlers", handlers);
+    
     handlers.set(element, new Map());
   }
-
+  console.log("handlers", handlers);
   const eventMap = handlers.get(element);
   if (!eventMap.has(eventType)) {
     eventMap.set(eventType, []);
@@ -218,8 +223,12 @@ function registry(element, eventType, handler) {
 
 /*************🌟 2. Attach Listener 🌟*************/ /*👍*/
 function attachListener(element, eventType, handler) {
+  console.log("attach");
+  
   if (!element || !eventType || !handler) return;
   if (!Events.includes(eventType)) return;
+  console.log("attachListener");
+  
   registry(element, eventType, handler);
 }
 
@@ -237,6 +246,8 @@ function initEventSystem(container = document) {
 
 /*************🌟 3. Find Registered Element 🌟*************/
 function findRegisteredElement(event) {
+  console.log('hello ');
+  
   let target = event.target;
   while (target && target !== document) {
     if (handlers.has(target)) {
