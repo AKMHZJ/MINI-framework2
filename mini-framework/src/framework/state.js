@@ -4,34 +4,29 @@ const stateValues = []
 
 let state = {};
 const listeners = new Set();
-let callIndex = -1;   // for useState hook order
+let callIndex = -1;   
 
-/* ---------- bootstrap ---------- */
 export function initState(initialState) {
   state = { ...initialState };
 }
 
-/* ---------- basic getters / setters ---------- */
 export function getState() {
-  return { ...state };             // return a shallow copy
+  return { ...state };             // return a copy
 }
 
 export function setState(newState) {
   state = { ...state, ...newState };
 
-  /* ensure hooks array exists */
   if (!Array.isArray(stateValues)) stateValues = [];
 
   listeners.forEach((fn) => fn(state));
 }
 
-/* ---------- subscription API ---------- */
 export function subscribe(fn) {
   listeners.add(fn);
   return () => listeners.delete(fn);
 }
 
-/* ---------- lightweight useState hook ---------- */
 
 export const useState = (initialValue) => {
   callIndex++
@@ -41,7 +36,6 @@ export const useState = (initialValue) => {
   }
 
   const setValue = (newValue) => {
-    //React allows passing a function to setState
     if (typeof newValue === 'function') {
       stateValues[currentCallIndex] = newValue(stateValues[currentCallIndex])
     } else {
