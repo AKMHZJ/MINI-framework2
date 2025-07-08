@@ -1,11 +1,4 @@
-// const button = {
-//   tag: "button",
-//   attrs: {
-//     className: "button",
-//     onClick: () => alert("Button clicked!"),
-//   },
-//   children: ["Click"],
-// };
+
 
 // const handlers = new Map();
 // function attachListener(root, eventType) {
@@ -132,6 +125,7 @@ function render(vnode, container) {
   if (prevVNode) {
     
     updateDOM(prevVNode, vnode, container);
+    console.log(vnode);
   } else {
     const dom = createDOM(vnode);
     container.innerHTML = "";
@@ -141,7 +135,7 @@ function render(vnode, container) {
 }
 
 function updateDOM(oldVNode, newVNode, parent) {
-    console.log(oldVNode, newVNode, parent);
+  console.log(oldVNode, newVNode, parent);
 
   if (!oldVNode || oldVNode.tag != newVNode.tag) {
     const newElement = createDOM(newVNode);
@@ -204,12 +198,12 @@ const Events = [
 ];
 /*************🌟 1. Registry 🌟*************/
 function registry(element, eventType, handler) {
-  console.log( "registry", element, eventType, handler);
-  
+  console.log("registry", element, eventType, handler);
+
   if (!handlers.has(element)) {
-    console.log( "registry", handlers.has(element));
+    console.log("registry", handlers.has(element));
     console.log("handlers", handlers);
-    
+
     handlers.set(element, new Map());
   }
   console.log("handlers", handlers);
@@ -224,11 +218,11 @@ function registry(element, eventType, handler) {
 /*************🌟 2. Attach Listener 🌟*************/ /*👍*/
 function attachListener(element, eventType, handler) {
   console.log("attach");
-  
+
   if (!element || !eventType || !handler) return;
   if (!Events.includes(eventType)) return;
   console.log("attachListener");
-  
+
   registry(element, eventType, handler);
 }
 
@@ -237,6 +231,8 @@ function initEventSystem(container = document) {
   Events.forEach((eventType) => {
     container.addEventListener(eventType, (event) => {
       const match = findRegisteredElement(event);
+      console.log(match, "match");
+
       if (match) {
         match.handlers.forEach((handler) => handler(event));
       }
@@ -246,8 +242,8 @@ function initEventSystem(container = document) {
 
 /*************🌟 3. Find Registered Element 🌟*************/
 function findRegisteredElement(event) {
-  console.log('hello ');
-  
+  console.log("hello ");
+
   let target = event.target;
   while (target && target !== document) {
     if (handlers.has(target)) {
@@ -271,100 +267,9 @@ function on(element, eventType, handler) {
   attachListener(element, eventType, handler);
 }
 
-/// Supposé que toutes tes fonctions sont définies ici (ou importées si module)
-// registry, attachListener, findRegisteredElement, initEventSystem, on
 
-// Reset state before each test
-// handlers.clear();
 
-// // Simule un DOM simple
-// const div = document.createElement("div");
-// div.id = "test-div";
-// document.body.appendChild(div);
-
-// ///////////////////////
-// // 🔹 Test 1: registry
-// ///////////////////////
-// let called1 = false;
-// function handler1() { called1 = true }
-
-// registry(div, "click", handler1);
-
-// const map = handlers.get(div);
-// console.log(map.has("click"), map.get("click").includes(handler1));
-
-// console.assert(map.has("click"), "❌ Test 1.1: Event type not registered");
-// console.assert(map.get("click").includes(handler1), "❌ Test 1.2: Handler not registered");
-// console.log("✅ Test 1 Passed: registry");
-
-// ////////////////////////////
-// // 🔹 Test 2: attachListener
-// ////////////////////////////
-// let called2 = false;
-// function handler2() { called2 = true }
-
-// attachListener(div, "click", handler2);
-// const map2 = handlers.get(div);
-// console.assert(map2.has("click"), "❌ Test 2.1: attachListener failed to register event");
-// console.assert(map2.get("click").includes(handler2), "❌ Test 2.2: Handler not attached");
-// console.log("✅ Test 2 Passed: attachListener");
-
-// /////////////////////////////////////////
-// // 🔹 Test 3: findRegisteredElement
-// /////////////////////////////////////////
-// let called3 = false;
-// function handler3() { called3 = true }
-
-// const btn = document.createElement("button");
-// div.appendChild(btn);
-// registry(btn, "click", handler3);
-
-// const fakeEvent = new MouseEvent("click", { bubbles: true });
-// console.log(fakeEvent);
-
-// Object.defineProperty(fakeEvent, "target", { value: btn });
-
-// const found = findRegisteredElement(fakeEvent);
-// console.assert(found && found.element === btn, "❌ Test 3.1: Element not found");
-// console.assert(found.handlers.includes(handler3), "❌ Test 3.2: Handler not found");
-// console.log("✅ Test 3 Passed: findRegisteredElement");
-
-// /////////////////////////////////////////
-// // 🔹 Test 4: initEventSystem + bubbling
-// /////////////////////////////////////////
-// let handlerFired = false;
-// function globalHandler() { handlerFired = true }
-
-// on(btn, "click", globalHandler);
-// initEventSystem(); // sets up delegation
-
-// btn.dispatchEvent(new MouseEvent("click", { bubbles: true }));
-
-// setTimeout(() => {
-//   console.assert(handlerFired, "❌ Test 4 Failed: Event did not trigger delegated handler");
-//   console.log("✅ Test 4 Passed: initEventSystem + delegation");
-// }, 0);
-
-// /////////////////////////////////////////
-// // 🔹 Test 5: on (wrapper for attachListener)
-// /////////////////////////////////////////
-// let called5 = false;
-// console.log(called5, '5');
-// const span = document.createElement("span");
-// document.body.appendChild(span);
-
-// on(span, "click", () => {
-//   console.log(called5, '55');
-//   called5 = true });
-// span.dispatchEvent(new MouseEvent("click", { bubbles: true }));
-
-// setTimeout(() => {
-//   console.log(called5, '5');
-
-//   console.assert(called5, "❌ Test 5 Failed: `on` did not attach or respond");
-//   console.log("✅ Test 5 Passed: on()");
-// }, 0);
-
+/*************🌟🌟*************/ 
 function makeElement(tag, attrs = {}, children = []) {
   // ── extract special "key" ---------------------------------
   let key = undefined;
@@ -395,10 +300,9 @@ function App() {
       {
         onClick: () => {
           console.log("heey");
-
-         count++;
-
-           render(App(), document.getElementById('frame'));
+           
+          count++;
+          console.log("count", count);
         },
       },
       "Increment"
@@ -407,7 +311,11 @@ function App() {
 }
 
 const container = document.getElementById("frame");
-
+// function testtt() {
+//   console.log(document.getElementById("frame"));
+  
+//   render(App(), document.getElementById("frame"));
+// }
 console.log(container, "container");
 
 initEventSystem(container);
