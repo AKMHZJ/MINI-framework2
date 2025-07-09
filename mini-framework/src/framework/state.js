@@ -1,8 +1,9 @@
 
 
-const stateValues = []
 
 let state = {};
+state.stateValues = []
+
 const listeners = new Set();
 let callIndex = -1;   
 
@@ -17,7 +18,7 @@ export function getState() {
 export function setState(newState) {
   state = { ...state, ...newState };
 
-  if (!Array.isArray(stateValues)) stateValues = [];
+  if (!Array.isArray(state.stateValues)) state.stateValues = [];
 
   listeners.forEach((fn) => fn(state));
 }
@@ -31,20 +32,20 @@ export function subscribe(fn) {
 export const useState = (initialValue) => {
   callIndex++
   const currentCallIndex = callIndex
-  if (stateValues[currentCallIndex] === undefined) {
-    stateValues[currentCallIndex] = initialValue
+  if (state.stateValues[currentCallIndex] === undefined) {
+    state.stateValues[currentCallIndex] = initialValue
   }
 
   const setValue = (newValue) => {
     if (typeof newValue === 'function') {
-      stateValues[currentCallIndex] = newValue(stateValues[currentCallIndex])
+      state.stateValues[currentCallIndex] = newValue(state.stateValues[currentCallIndex])
     } else {
-      stateValues[currentCallIndex] = newValue
+      state.stateValues[currentCallIndex] = newValue
     }
 
      listeners.forEach((fn) => fn(state));
   }
-  return [stateValues[currentCallIndex], setValue]
+  return [state.stateValues[currentCallIndex], setValue]
 }
 
 export function resetHookIndex() {
