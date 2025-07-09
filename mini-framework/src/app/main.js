@@ -47,7 +47,8 @@ function TodoApp() {
   const allDone = state.todos.length && state.todos.every((t) => t.completed);
   const list = visible(state.todos, state.filter);
 
-  return makeElement("section", { class: "todoapp", id: "root" }, [
+  return makeElement("div", {}, [
+     makeElement("section", { class: "todoapp", id: "root" }, [
     /* ---------- header ---------- */
     makeElement("header", { class: "header", "data-testid": "header" }, [
       makeElement("h1", {}, "todos"),
@@ -325,7 +326,15 @@ function TodoApp() {
         ),
       ]
     ),
-  ]);
+  ]),
+  makeElement("footer", { class: "info" }, [
+    makeElement("p", {}, "Double-click to edit a todo"),
+    makeElement("p", {}, "Created by ", makeElement("a", { href: "https://github.com/AKMHZJ/MINI-framework2.git" }, "mini-framwork team")),
+    makeElement("p", {}, "Part of ", makeElement("a", { href: "http://todomvc.com" }, "TodoMVC")),
+  ]),
+  
+])
+   
 }
 
 /* reactive render --------------------------------------------------- */
