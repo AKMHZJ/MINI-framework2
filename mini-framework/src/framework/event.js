@@ -1,87 +1,136 @@
 
-const handlers = new Map();
-const eventHandlers = new Map();
+// const handlers = new Map();
+// const eventHandlers = new Map();
 
-/// List of Events
+// /// List of Events
+// const Events = [
+//     'click', 'dblclick', 'keydown', 'keyup', 'keypress', 
+//     'input', 'change', 'focus', 'blur',
+//     'submit', 'reset', 'scroll', 'resize'
+// ];
+
+
+// // [button]{handleClick}
+// // [button]{handleSubmit}
+
+// // Map(){
+// //   button: [func1, func2],
+// //   span: [func1, func2]
+// // }
+
+
+
+// /*************🌟 1. Registry 🌟*************/
+// function registry(element, eventType, handler) {
+//     if (!handlers.has(element)) {
+//         handlers.set(element, new Map());
+//     }
+
+//     const eventMap = handlers.get(element);
+//     if (!eventMap.has(eventType)) {
+//         eventMap.set(eventType, []);
+//     }
+
+//     eventMap.get(eventType).push(handler);
+// }
+
+// /*************🌟 2. Attach Listener 🌟*************/ /*👍*/
+// function attachListener(element, eventType, handler) {
+//      if (!element || !eventType || !handler) return
+//      if (!Events.includes(eventType)) return
+
+//     registry(element, eventType, handler);
+// }
+
+
+// /*************🌟 4. Init Event System 🌟*************/ /*👍*/
+// export function initEventSystem(container = document) {
+//   Events.forEach((eventType) => {
+//     container.addEventListener(eventType, (event) => {
+//       const match = findRegisteredElement(event);
+//       if (match) {
+//         match.handlers.forEach(handler => handler(event));
+//       } 
+//     })
+//   })
+// }
+
+
+// /*************🌟 3. Find Registered Element 🌟*************/
+// function findRegisteredElement(event) {
+//    let target = event.target;
+//    while (target && target !== document) {
+//     if (handlers.has(target)) {
+//       const eventMap = handlers.get(target);
+//       if (eventMap.has(event.type)) {
+//         return {
+//           element: target,
+//           handlers: eventMap.get(event.type),
+//         };
+//       }
+//     }
+//     target = target.parentNode;
+//   }
+//   return null;
+// }
+
+
+// /*************🌟 5. ON  🌟*************/  /*👍*/
+// export function on(element, eventType, handler) {
+//     attachListener(element, eventType, handler);
+// }
+
+
+
+const handlers = new Map();
+
 const Events = [
     'click', 'dblclick', 'keydown', 'keyup', 'keypress', 
     'input', 'change', 'focus', 'blur',
     'submit', 'reset', 'scroll', 'resize'
 ];
 
-
-// [button]{handleClick}
-// [button]{handleSubmit}
-
-// Map(){
-//   button: [func1, func2],
-//   span: [func1, func2]
-// }
-
-
-
-/*************🌟 1. Registry 🌟*************/
 function registry(element, eventType, handler) {
     if (!handlers.has(element)) {
         handlers.set(element, new Map());
     }
-
-    const eventMap = handlers.get(element);
-    if (!eventMap.has(eventType)) {
-        eventMap.set(eventType, []);
-    }
-
-    eventMap.get(eventType).push(handler);
+    handlers.get(element).set(eventType, handler);
 }
 
-/*************🌟 2. Attach Listener 🌟*************/ /*👍*/
 function attachListener(element, eventType, handler) {
-     if (!element || !eventType || !handler) return
-     if (!Events.includes(eventType)) return
-
+    if (!element || !eventType || !handler) return;
+    if (!Events.includes(eventType)) return;
     registry(element, eventType, handler);
 }
 
-
-/*************🌟 4. Init Event System 🌟*************/ /*👍*/
-export function initEventSystem(container = document) {
-  Events.forEach((eventType) => {
-    container.addEventListener(eventType, (event) => {
-      const match = findRegisteredElement(event);
-      if (match) {
-        match.handlers.forEach(handler => handler(event));
-      } 
-    })
-  })
-}
-
-
-/*************🌟 3. Find Registered Element 🌟*************/
 function findRegisteredElement(event) {
-   let target = event.target;
-   while (target && target !== document) {
-    if (handlers.has(target)) {
-      const eventMap = handlers.get(target);
-      if (eventMap.has(event.type)) {
-        return {
-          element: target,
-          handlers: eventMap.get(event.type),
-        };
-      }
+    let target = event.target;
+    while (target && target !== document) {
+        if (handlers.has(target)) {
+            const eventMap = handlers.get(target);
+            if (eventMap.has(event.type)) {
+                return target;
+            }
+        }
+        target = target.parentNode;
     }
-    target = target.parentNode;
-  }
-  return null;
+    return null;
 }
 
+export function initEventSystem(container = document) {
+    Events.forEach((eventType) => {
+        container.addEventListener(eventType, (event) => {
+            const target = findRegisteredElement(event);
+            if (target) {
+                handlers.get(target).get(event.type)(event);
+            }
+        });
+    });
+}
 
-/*************🌟 5. ON  🌟*************/  /*👍*/
 export function on(element, eventType, handler) {
     attachListener(element, eventType, handler);
 }
-
-
-
 
 
 
