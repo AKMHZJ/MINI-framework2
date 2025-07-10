@@ -8,6 +8,10 @@ const Events = [
 
 /*************🌟 1. Registry 🌟*************/
 function registry(element, eventType, handler) {
+    if (eventType == 'blur'){
+        element.onblur = handler
+        return
+    }
     if (!handlers.has(element)) {
         handlers.set(element, new Map());
     }

@@ -243,7 +243,9 @@ function TodoApp() {
                         }
                       },
                       onBlur: () =>
-                        setState({ ...state, editingId: null, editValue: "" }),
+{console.log("bluuuuuu");
+
+                        setState({ ...state, editingId: false, editValue: "" })}
                     })
                   : null,
               ]

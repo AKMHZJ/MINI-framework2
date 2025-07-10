@@ -107,6 +107,7 @@ export function useState(initialValue) {
   return [state.hooks[idx], setValue];
 }
 
-export function resetHookIndex() {
+export function resetHookIndex() { 
+  
   callIndex = -1;
 }
