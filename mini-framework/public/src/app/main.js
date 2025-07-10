@@ -66,7 +66,7 @@ function TodoApp() {
           onKeyDown: (e) => {
             if (e.key === "Enter") {
               const v = text.trim();
-              if (!v) return;
+              if (v.length < 2) return;
               setState({
                 ...state,
                 todos: [
@@ -78,6 +78,7 @@ function TodoApp() {
               e.target.value = "";
             }
           },
+          // autoFocus: true,
         }),
         makeElement(
           "label",
@@ -220,7 +221,7 @@ function TodoApp() {
                       onKeyPress: (e) => {
                         if (e.key === "Enter") {
                           const v = state.editValue.trim();
-                          if (v) {
+                          if (v.length >= 2) {
                             setState({
                               ...state,
                               todos: state.todos.map((t) =>
@@ -329,8 +330,8 @@ function TodoApp() {
   ]),
   makeElement("footer", { class: "info" }, [
     makeElement("p", {}, "Double-click to edit a todo"),
-    makeElement("p", {}, "Created by ", makeElement("a", { href: "https://github.com/AKMHZJ/MINI-framework2.git" }, "mini-framwork team")),
-    makeElement("p", {}, "Part of ", makeElement("a", { href: "http://todomvc.com" }, "TodoMVC")),
+    makeElement("p", {}, "Created by mini-framwork team"),
+    makeElement("p", {}, "Part of TodoMVC"),
   ]),
   
 ])
