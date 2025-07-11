@@ -51,7 +51,7 @@ function createDOM(vnode) {
   // attrs / props
   for (const [key, value] of Object.entries(vnode.attrs)) {
     if (key.startsWith("on")) {
-      on(key.toLowerCase().slice(2), el, value);
+      on(el, key.toLowerCase().slice(2), value);
     } else if (key === "checked") {
       if (value) {
         el.setAttribute("checked", "");
@@ -121,7 +121,7 @@ function updateDOM(oldVNode, newVNode, parent) {
   for (const k of Object.keys(oldA)) {
     if (!(k in newA)) {
       if (k.startsWith("on")) {
-        on(k.toLowerCase().slice(2), newVNode.element, () => {});
+        on(newVNode.element, k.toLowerCase().slice(2),  () => {});
       } else {
         newVNode.element.removeAttribute(k);
       }
@@ -132,7 +132,7 @@ function updateDOM(oldVNode, newVNode, parent) {
   for (const [k, v] of Object.entries(newA)) {
     if (oldA[k] !== v) {
       if (k.startsWith("on")) {
-        on(k.toLowerCase().slice(2), newVNode.element, v);
+        on(newVNode.element, k.toLowerCase().slice(2), v);
       } else if (k === "checked") {
         if (v) {
           newVNode.element.setAttribute("checked", "");

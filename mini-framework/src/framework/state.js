@@ -51,6 +51,7 @@ export const useState = (initialValue) => {
   return [state.stateValues[currentCallIndex], setValue]
 }
 
-export function resetHookIndex() {
+export function resetHookIndex() { 
+  
   callIndex = -1;
 }

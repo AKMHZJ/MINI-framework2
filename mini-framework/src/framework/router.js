@@ -10,22 +10,24 @@ const container = document.getElementById("app");
 function matchRoute(hash) {
   const clean = hash.replace(/^#\/?/, "");           // "#/active" → "active"
   return (
-    routes.find((r) => r.path.slice(1) === clean) || routes[0]  // default /all
+    routes.find((r) => r.path.slice(1) === clean)  // default /all
   );
 }
 
 /* central render function */
 function renderRoute() {
   const hash  = window.location.hash || "#/all";
-  const route = matchRoute(hash);
+  const route = matchRoute(hash) || routes.find(r => r.path === "*");
   if (!route) return;
 
   /* keep state.filter in sync with the URL */
+    if (route.path !== "*") {
   const state      = getState();
   const newFilter  = route.path.slice(1) || "all";
   if (state.filter !== newFilter) {
     setState({ ...state, filter: newFilter });
   }
+}
 
   resetHookIndex();                 // ←  make hooks start from 0
   const vnode = route.view();
