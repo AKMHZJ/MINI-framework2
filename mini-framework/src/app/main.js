@@ -45,7 +45,6 @@ function TodoApp() {
   const handleEditSave = (todoId) => {
     const currentState = getState(); // Always get the latest state
     const v = currentState.editValue.trim();
-    // if (v.length < 2) return;
     if (v && v.length >= 2) {
       setState({
         ...currentState,
@@ -59,7 +58,6 @@ function TodoApp() {
       // If the text is empty, delete the todo
       setState({
         ...currentState,
-        // todos: currentState.todos.filter((t) => t.id !== todoId),
         editingId: null,
         editValue: "",
       });
