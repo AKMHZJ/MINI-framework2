@@ -45,8 +45,8 @@ function TodoApp() {
   const handleEditSave = (todoId) => {
     const currentState = getState(); // Always get the latest state
     const v = currentState.editValue.trim();
-
-    if (v) {
+    // if (v.length < 2) return;
+    if (v && v.length >= 2) {
       setState({
         ...currentState,
         todos: currentState.todos.map((t) =>
