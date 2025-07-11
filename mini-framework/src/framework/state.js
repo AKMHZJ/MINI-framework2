@@ -1,67 +1,9 @@
 
 
-// const stateValues = []
 
-// let state = {};
-// const listeners = new Set();
-// let callIndex = -1;   
+let state = {};
+state.stateValues = []
 
-// export function initState(initialState) {
-//   state = { ...initialState };
-// }
-
-// export function getState() {
-//   return { ...state };             // return a copy
-// }
-
-// export function setState(newState) {
-//   state = { ...state, ...newState };
-
-//   if (!Array.isArray(stateValues)) stateValues = [];
-
-//   listeners.forEach((fn) => fn(state));
-// }
-
-// export function subscribe(fn) {
-//   listeners.add(fn);
-//   return () => listeners.delete(fn);
-// }
-
-
-// export const useState = (initialValue) => {
-//   callIndex++
-//   const currentCallIndex = callIndex
-//   if (stateValues[currentCallIndex] === undefined) {
-//     stateValues[currentCallIndex] = initialValue
-//   }
-
-//   const setValue = (newValue) => {
-//     if (typeof newValue === 'function') {
-//       stateValues[currentCallIndex] = newValue(stateValues[currentCallIndex])
-//     } else {
-//       stateValues[currentCallIndex] = newValue
-//     }
-
-//      listeners.forEach((fn) => fn(state));
-//   }
-//   return [stateValues[currentCallIndex], setValue]
-// }
-
-// export function resetHookIndex() {
-//   callIndex = -1;
-// }
-
-
-// #################################################
-// #################################################
-// #################################################
-// #################################################
-
-/* ==========================================================
-   In-memory global state (no localStorage persistence)
-   ========================================================== */
-
-let state      = {};
 const listeners = new Set();
 let callIndex   = -1;   // for useState hook order
 
@@ -78,8 +20,7 @@ export function getState() {
 export function setState(newState) {
   state = { ...state, ...newState };
 
-  /* ensure hooks array exists */
-  if (!Array.isArray(state.hooks)) state.hooks = [];
+  if (!Array.isArray(state.stateValues)) state.stateValues = [];
 
   listeners.forEach((fn) => fn(state));
 }
@@ -90,21 +31,24 @@ export function subscribe(fn) {
   return () => listeners.delete(fn);
 }
 
-/* ---------- lightweight useState hook ---------- */
-export function useState(initialValue) {
-  callIndex++;
-  const idx = callIndex;
 
-  if (state.hooks[idx] === undefined) {
-    state.hooks[idx] = initialValue;
+export const useState = (initialValue) => {
+  callIndex++
+  const currentCallIndex = callIndex
+  if (state.stateValues[currentCallIndex] === undefined) {
+    state.stateValues[currentCallIndex] = initialValue
   }
 
-  const setValue = (v) => {
-    state.hooks[idx] = v;
-    listeners.forEach((fn) => fn(state));
-  };
+  const setValue = (newValue) => {
+    if (typeof newValue === 'function') {
+      state.stateValues[currentCallIndex] = newValue(state.stateValues[currentCallIndex])
+    } else {
+      state.stateValues[currentCallIndex] = newValue
+    }
 
-  return [state.hooks[idx], setValue];
+     listeners.forEach((fn) => fn(state));
+  }
+  return [state.stateValues[currentCallIndex], setValue]
 }
 
 export function resetHookIndex() {
