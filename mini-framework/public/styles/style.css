@@ -193,9 +193,13 @@ body {
 
 .todo-list li.editing .edit {
     display: block;
-    margin: 0 0 0 43px;
-    padding: 12px 16px;
-    width: calc(100% - 43px)
+    margin: 0;
+    padding: 12px 16px 12px 60px;
+    width: 100%;
+}
+
+.todo-list li.editing .toggle + label {
+    background-image: none;
 }
 
 .todo-list li.editing .view {
