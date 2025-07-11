@@ -365,7 +365,6 @@ defineRoutes([
   { path: "/", view: TodoApp },  
   { path: "/active", view: TodoApp },
   { path: "/completed", view: TodoApp },
-  { path: "/autre", view: notFound },
   { path: "*", view: notFound }, 
 ]);
 initRouter();
