@@ -55,7 +55,6 @@ function TodoApp() {
         editValue: "",
       });
     } else {
-      // If the text is empty, delete the todo
       setState({
         ...currentState,
         editingId: null,

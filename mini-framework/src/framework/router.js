@@ -6,11 +6,11 @@ import { getState, setState, resetHookIndex } from "./state.js";
 let routes = [];
 const container = document.getElementById("app");
 
-/* helper: pick the route that matches the current #hash */
+
 function matchRoute(hash) {
-  const clean = hash.replace(/^#\/?/, "");           // "#/active" → "active"
+  const clean = hash.replace(/^#\/?/, "");           
   return (
-    routes.find((r) => r.path.slice(1) === clean)  // default /all
+    routes.find((r) => r.path.slice(1) === clean)  
   );
 }
 
@@ -29,22 +29,21 @@ function renderRoute() {
   }
 }
 
-  resetHookIndex();                 // ←  make hooks start from 0
+  resetHookIndex();               
   const vnode = route.view();
   render(vnode, container);
 }
 
-/* public API */
+
 export function defineRoutes(rs) {
   routes = rs;
 }
 
 export function navigate(path /* "/all" | "/active" | "/completed" */) {
   window.location.hash = `#${path}`;
-  /* hashchange listener will call renderRoute() */
 }
 
 export function initRouter() {
   window.addEventListener("hashchange", renderRoute);
-  renderRoute();                     // initial render
+  renderRoute();                     
 }

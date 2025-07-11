@@ -1,18 +1,12 @@
-// ======================================================
-//  DOM abstraction and diff / patch logic  (final)
-// ======================================================
 
 import { on } from "./event.js";
 
-/*-------------------------------------------------------
- * create virtual element
- *-----------------------------------------------------*/
+
 export function makeElement(tag, attrs = {}, children = []) {
-  // ── extract special "key" ---------------------------------
   let key = undefined;
   if ("key" in attrs) {
     key = attrs.key;
-    delete attrs.key;           // do not output it as HTML attr
+    delete attrs.key;           
   }
 
   // ── normalise children ------------------------------------
@@ -28,9 +22,7 @@ export function makeElement(tag, attrs = {}, children = []) {
   return { tag, attrs, children, element: null, key };
 }
 
-/*-------------------------------------------------------
- * convert VNode → real DOM  (initial render)
- *-----------------------------------------------------*/
+
 function createDOM(vnode) {
   if (!vnode || !vnode.tag) {
     console.warn("Invalid vnode passed to createDOM:", vnode);
@@ -67,9 +59,7 @@ function createDOM(vnode) {
   return el;
 }
 
-/*-------------------------------------------------------
- * master render entry
- *-----------------------------------------------------*/
+
 let prevVNode = null;
 
 export function render(vnode, container) {
@@ -82,9 +72,7 @@ export function render(vnode, container) {
   prevVNode = vnode;
 }
 
-/*-------------------------------------------------------
- * diff & patch
- *-----------------------------------------------------*/
+
 function updateDOM(oldVNode, newVNode, parent) {
   // handle null or replaced node
   if (!oldVNode || !oldVNode.element) {

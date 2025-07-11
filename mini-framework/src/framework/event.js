@@ -6,7 +6,7 @@ const Events = [
     'submit', 'reset', 'scroll', 'resize'
 ];
 
-/*************🌟 1. Registry 🌟*************/
+
 function registry(element, eventType, handler) {
     if (eventType == 'blur'){
         element.onblur = handler
@@ -19,7 +19,7 @@ function registry(element, eventType, handler) {
 }
 
 
-/*************🌟 2. Attach Listener 🌟*************/ 
+
 function attachListener(element, eventType, handler) {
     if (!element || !eventType || !handler) return;
     if (!Events.includes(eventType)) return;
@@ -27,7 +27,7 @@ function attachListener(element, eventType, handler) {
 }
 
 
-/*************🌟 3. Find Registered Element 🌟*************/
+
 function findRegisteredElement(event) {
     let target = event.target;
     while (target && target !== document) {
@@ -43,7 +43,7 @@ function findRegisteredElement(event) {
 }
 
 
-/*************🌟 4. Init Event System 🌟*************/ 
+
 export function initEventSystem(container = document) {
     Events.forEach((eventType) => {
         container.addEventListener(eventType, (event) => {
@@ -56,7 +56,7 @@ export function initEventSystem(container = document) {
 }
 
 
-/*************🌟 5. ON  🌟*************/ 
+
 export function on(element, eventType, handler) {
     attachListener(element, eventType, handler);
 }
