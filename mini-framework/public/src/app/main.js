@@ -59,7 +59,7 @@ function TodoApp() {
       // If the text is empty, delete the todo
       setState({
         ...currentState,
-        todos: currentState.todos.filter((t) => t.id !== todoId),
+        // todos: currentState.todos.filter((t) => t.id !== todoId),
         editingId: null,
         editValue: "",
       });
