@@ -42,45 +42,41 @@ function TodoApp() {
   const state = getState();
   const [text, setText] = useState("");
 
-  const left = remainingCount(state.todos);
-  const anyDone = state.todos.some((t) => t.completed);
-  const allDone = state.todos.length && state.todos.every((t) => t.completed);
-  const list = visible(state.todos, state.filter);
+  const handleEditSave = (todoId) => {
+    const currentState = getState(); // Always get the latest state
+    const v = currentState.editValue.trim();
 
-  /******🌟 add Todo 🌟*******/
-  const addTodo = (e) => {
-    if (e.key === "Enter") {
-      const v = text.trim();
-      if (v.length < 2) return;
+    if (v) {
       setState({
-        ...state,
-        todos: [...state.todos, { id: Date.now(), text: v, completed: false }],
+        ...currentState,
+        todos: currentState.todos.map((t) =>
+          t.id === todoId ? { ...t, text: v } : t
+        ),
+        editingId: null,
+        editValue: "",
       });
-      setText("");
-      e.target.value = "";
+    } else {
+      // If the text is empty, delete the todo
+      setState({
+        ...currentState,
+        todos: currentState.todos.filter((t) => t.id !== todoId),
+        editingId: null,
+        editValue: "",
+      });
     }
   };
 
-  /******🌟 delete Todo 🌟*******/
-  const deleteTodo = (id) => {
-    setState({
-      ...state,
-      todos: state.todos.filter((t) => t.id !== id),
-    })
-  };
-let editText = ''
-  /******🌟 update Todo 🌟*******/
-  const updateTodo = (id, text) => {
-  };
+  const left = remainingCount(state.todos);
+  const anyDone = state.todos.some((t) => t.completed);
+  const allDone = state.todos.length > 0 && state.todos.every((t) => t.completed);
+  const list = visible(state.todos, state.filter);
 
   return makeElement("div", {}, [
     makeElement("section", { class: "todoapp", id: "root" }, [
-
       /* ---------- header ---------- */
       makeElement("header", { class: "header", "data-testid": "header" }, [
         makeElement("h1", {}, "todos"),
 
-        /* div.input-container + label (exact like React demo) */
         makeElement("div", { class: "input-container" }, [
           makeElement("input", {
             class: "new-todo",
@@ -90,7 +86,21 @@ let editText = ''
             "data-testid": "text-input",
             value: text,
             onInput: (e) => setText(e.target.value),
-            onKeyDown : addTodo,  /////
+            onKeyDown: (e) => {
+              if (e.key === "Enter") {
+                const v = text.trim();
+                if (v.length < 2) return;
+                setState({
+                  ...getState(),
+                  todos: [
+                    ...getState().todos,
+                    { id: Date.now(), text: v, completed: false },
+                  ],
+                });
+                setText("");
+                e.target.value = "";
+              }
+            },
             autoFocus: true,
           }),
           makeElement(
@@ -122,8 +132,8 @@ let editText = ''
               checked: allDone,
               onChange: () =>
                 setState({
-                  ...state,
-                  todos: state.todos.map((t) => ({
+                  ...getState(),
+                  todos: getState().todos.map((t) => ({
                     ...t,
                     completed: !allDone,
                   })),
@@ -171,8 +181,8 @@ let editText = ''
                       checked: todo.completed,
                       onChange: () =>
                         setState({
-                          ...state,
-                          todos: state.todos.map((t) =>
+                          ...getState(),
+                          todos: getState().todos.map((t) =>
                             t.id === todo.id
                               ? { ...t, completed: !t.completed }
                               : t
@@ -185,27 +195,19 @@ let editText = ''
                         "data-testid": "todo-item-label",
                         ondblclick: () => {
                           setState({
-                            ...state,
+                            ...getState(),
                             editingId: todo.id,
                             editValue: todo.text,
                           });
-                          /* wait for DOM update, then focus & select */
                           setTimeout(() => {
                             const inp = document.getElementById(
                               `edit-${todo.id}`
                             );
                             if (inp) {
-                              console.log(inp, "inp");
-                              console.log(inp.value.length, "length");
-                              
                               inp.focus();
-                              inp.setSelectionRange(
-                                inp.value.length,
-                                inp.value.length
-                              );
+                              inp.select();
                             }
                           }, 0);
-                          
                         },
                       },
                       todo.text
@@ -213,58 +215,42 @@ let editText = ''
                     makeElement("button", {
                       class: "destroy",
                       "data-testid": "todo-item-button",
-                      onClick: () => deleteTodo(todo.id) ////
+                      onClick: () =>
+                        setState({
+                          ...getState(),
+                          todos: getState().todos.filter(
+                            (t) => t.id !== todo.id
+                          ),
+                        }),
                     }),
                   ]),
 
                   editing
                     ? makeElement("input", {
-                        class: "new-todo",
-                        id: "todo-input",
-                        type: "text",
+                        class: "edit",
+                        id: `edit-${todo.id}`,
                         value: state.editValue,
-                        "data-testid": "text-input",
                         autofocus: true,
                         onInput: (e) =>
-                          setState({ ...state, editValue: e.target.value }),
+                          setState({ ...getState(), editValue: e.target.value }),
+                        onBlur: () => {
+                          if (getState().editingId === todo.id) {
+                            handleEditSave(todo.id);
+                          }
+                        },
                         onKeyDown: (e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            handleEditSave(todo.id);
+                          }
                           if (e.key === "Escape") {
-                            
                             setState({
-                              ...state,
+                              ...getState(),
                               editingId: null,
                               editValue: "",
                             });
                           }
                         },
-                        onKeyPress: (e) => {
-                          if (e.key === "Enter") {
-                            console.log('helloo', state);
-                            const v = state.editValue.trim();
-                            if (v.length >= 2) {
-                              setState({
-                                ...state,
-                                todos: state.todos.map((t) =>
-                                  t.id === todo.id ? { ...t, text: v } : t
-                                ),
-                                editingId: null,
-                                editValue: "",
-                              });
-                            } else {
-                              setState({
-                                ...state,
-                                todos: state.todos.filter(
-                                  (t) => t.id !== todo.id
-                                ),
-                                editingId: null,
-                                editValue: "",
-                              });
-                            }
-                          }
-                        },
-                        onBlur: () =>
-                          {console.log("bluuuuuu");
-                          setState({ ...state, editingId: false, editValue: "" })}
                       })
                     : null,
                 ]
@@ -286,7 +272,7 @@ let editText = ''
           makeElement(
             "span",
             { class: "todo-count" },
-            `${left} ${plural(left)} left!`
+            `${left} ${plural(left)} left`
           ),
 
           makeElement(
@@ -332,26 +318,27 @@ let editText = ''
             ]
           ),
 
-          makeElement(
-            "button",
-            {
-              class: "clear-completed",
-              onClick: () => {
-                /* remove only completed items; if none, state stays the same */
-                const remaining = state.todos.filter((t) => !t.completed);
-                if (remaining.length !== state.todos.length) {
-                  setState({ ...state, todos: remaining });
-                }
-              },
-            },
-            "Clear completed"
-          ),
+          anyDone
+            ? makeElement(
+                "button",
+                {
+                  class: "clear-completed",
+                  onClick: () => {
+                    setState({
+                      ...getState(),
+                      todos: getState().todos.filter((t) => !t.completed),
+                    });
+                  },
+                },
+                "Clear completed"
+              )
+            : null,
         ]
       ),
     ]),
     makeElement("footer", { class: "info" }, [
       makeElement("p", {}, "Double-click to edit a todo"),
-      makeElement("p", {}, "Created by mini-framwork team"),
+      makeElement("p", {}, "Created by the mini-framework team"),
       makeElement("p", {}, "Part of TodoMVC"),
     ]),
   ]);
