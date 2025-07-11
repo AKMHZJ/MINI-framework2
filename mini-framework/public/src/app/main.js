@@ -344,6 +344,15 @@ function TodoApp() {
   ]);
 }
 
+
+function notFound() {
+  return makeElement("div", { class: "not-found" }, [
+    makeElement("h1", {}, "404 - Page Not Found"),
+    makeElement("p", {}, "The page you are looking for does not exist."),
+    makeElement("a", { href: "#/", onClick: () => navigate("/") }, "Go to Home"),
+  ]);
+}
+
 /* reactive render --------------------------------------------------- */
 subscribe(() => {
   resetHookIndex();
@@ -353,7 +362,10 @@ subscribe(() => {
 /* routes ------------------------------------------------------------ */
 defineRoutes([
   { path: "/all", view: TodoApp },
+  { path: "/", view: TodoApp },  
   { path: "/active", view: TodoApp },
   { path: "/completed", view: TodoApp },
+  { path: "/autre", view: notFound },
+  { path: "*", view: notFound }, 
 ]);
 initRouter();
